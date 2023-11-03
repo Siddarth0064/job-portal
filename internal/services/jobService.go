@@ -7,6 +7,15 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type CompanyService interface {
+	CompanyCreate(nc model.CreateCompany) (model.Company, error)
+	GetAllCompanies() ([]model.Company, error)
+	GetCompany(id int64) (model.Company, error)
+	GetAllJobs() ([]model.Job, error)
+	GetJobs(id int) ([]model.Job, error)
+	JobCreate(nj model.CreateJob, id uint64) (model.Job, error)
+}
+
 func (s *Service) CompanyCreate(nc model.CreateCompany) (model.Company, error) {
 	company := model.Company{CompanyName: nc.CompanyName, Adress: nc.Adress, Domain: nc.Domain}
 	cu, err := s.c.CreateCompany(company)

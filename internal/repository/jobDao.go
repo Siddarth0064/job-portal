@@ -2,6 +2,7 @@ package repository
 
 import model "job-portal-api/internal/models"
 
+//go:generate mockgen -source=jobDao.go -destination=jobDao_mock.go -package=repository
 type Company interface {
 	CreateCompany(model.Company) (model.Company, error)
 	GetAllCompany() ([]model.Company, error)
@@ -11,7 +12,7 @@ type Company interface {
 	GetAllJobs() ([]model.Job, error)
 }
 
-func (r Repo) CreateCompany(u model.Company) (model.Company, error) {
+func (r *Repo) CreateCompany(u model.Company) (model.Company, error) {
 	err := r.db.Create(&u).Error
 	if err != nil {
 		return model.Company{}, err
@@ -19,7 +20,7 @@ func (r Repo) CreateCompany(u model.Company) (model.Company, error) {
 	return u, nil
 }
 
-func (r Repo) GetAllCompany() ([]model.Company, error) {
+func (r *Repo) GetAllCompany() ([]model.Company, error) {
 	var s []model.Company
 	err := r.db.Find(&s).Error
 	if err != nil {
@@ -29,7 +30,7 @@ func (r Repo) GetAllCompany() ([]model.Company, error) {
 	return s, nil
 }
 
-func (r Repo) GetCompany(id int64) (model.Company, error) {
+func (r *Repo) GetCompany(id int64) (model.Company, error) {
 	var m model.Company
 
 	tx := r.db.Where("id = ?", id)
@@ -40,14 +41,14 @@ func (r Repo) GetCompany(id int64) (model.Company, error) {
 	return m, nil
 
 }
-func (r Repo) CreateJob(j model.Job) (model.Job, error) {
+func (r *Repo) CreateJob(j model.Job) (model.Job, error) {
 	err := r.db.Create(&j).Error
 	if err != nil {
 		return model.Job{}, err
 	}
 	return j, nil
 }
-func (r Repo) GetJobs(id int) ([]model.Job, error) {
+func (r *Repo) GetJobs(id int) ([]model.Job, error) {
 	var m []model.Job
 
 	tx := r.db.Where("uid = ?", id)
@@ -58,7 +59,7 @@ func (r Repo) GetJobs(id int) ([]model.Job, error) {
 	return m, nil
 
 }
-func (r Repo) GetAllJobs() ([]model.Job, error) {
+func (r *Repo) GetAllJobs() ([]model.Job, error) {
 	var s []model.Job
 	err := r.db.Find(&s).Error
 	if err != nil {

@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	//"errors"
 	//"job-portal-api/internal/handlers"
 	//	"job-portal-api/internal/handlers"
 	middlewear "job-portal-api/internal/middleware"
 	model "job-portal-api/internal/models"
+	//"job-portal-api/internal/services"
 	"net/http"
 	"strconv"
 
@@ -46,7 +48,7 @@ func (h *handler) companyCreation(c *gin.Context) {
 	// Regclaims:=ctx.Value(middlewear.TokenIdKey)
 	// companyCreation.User= int(Regclaims.Subject)
 
-	us, err := h.us.CompanyCreate(companyCreation)
+	us, err := h.cs.CompanyCreate(companyCreation)
 	if err != nil {
 		log.Error().Err(err).Str("Trace Id", traceId).Msg("user signup problem")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": "user signup failed"})
@@ -67,7 +69,7 @@ func (h *handler) getAllCompany(c *gin.Context) {
 		return
 	}
 
-	us, err := h.us.GetAllCompanies()
+	us, err := h.cs.GetAllCompanies()
 	if err != nil {
 		log.Error().Err(err).Str("Trace Id", traceId).Msg("user signup problem")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": "user signup failed"})
@@ -87,7 +89,7 @@ func (h *handler) getCompany(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
-	co, _ := h.us.GetCompany(id)
+	co, _ := h.cs.GetCompany(id)
 
 	c.JSON(http.StatusOK, co)
 
@@ -122,7 +124,7 @@ func (h *handler) postJob(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "invalid input"})
 		return
 	}
-	us, err := h.us.JobCreate(jobCreation, id)
+	us, err := h.cs.JobCreate(jobCreation, id)
 	if err != nil {
 		log.Error().Err(err).Str("Trace Id", traceId).Msg("user signup problem")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": "user signup failed"})
@@ -144,7 +146,7 @@ func (h *handler) getJob(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
-	us, err := h.us.GetJobs(id)
+	us, err := h.cs.GetJobs(id)
 	if err != nil {
 		log.Error().Err(err).Str("Trace Id", traceId).Msg("user signup problem")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": "user signup failed"})
@@ -162,7 +164,7 @@ func (h *handler) getAllJob(c *gin.Context) {
 		return
 	}
 
-	us, err := h.us.GetAllJobs()
+	us, err := h.cs.GetAllJobs()
 	if err != nil {
 		log.Error().Err(err).Str("Trace Id", traceId).Msg("user signup problem")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"msg": "user signup failed"})

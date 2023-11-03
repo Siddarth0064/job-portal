@@ -61,7 +61,7 @@ func startApp() error {
 
 	api := http.Server{
 		Addr:    ":8085",
-		Handler: handlers.Api(a, *se),
+		Handler: handlers.Api(a, se),
 	}
 	err = api.ListenAndServe()
 	if err != nil {

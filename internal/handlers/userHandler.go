@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"job-portal-api/internal/auth"
 	"job-portal-api/internal/middleware"
 	"job-portal-api/internal/models"
@@ -15,9 +16,18 @@ import (
 
 type handler struct {
 	a  *auth.Auth
-	us services.Service
+	us services.UsersService
+	cs services.CompanyService
 }
 
+func NewHandler(a *auth.Auth, us services.UsersService, cs services.CompanyService) (*handler, error) {
+	if us == nil {
+		return nil, errors.New("service implementation not given")
+	}
+
+	return &handler{a: a, us: us, cs: cs}, nil
+
+}
 func (h *handler) userSignin(c *gin.Context) {
 	ctx := c.Request.Context()
 
