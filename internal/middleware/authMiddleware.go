@@ -12,6 +12,7 @@ import (
 
 const TokenIdKey key = "2"
 
+// ====================== AUTHENTICATION FUNC IS USED TO AUTHENTICATE THE TOKENS ==================================
 func (m Middlewear) Auth(next gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()

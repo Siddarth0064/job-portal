@@ -22,7 +22,7 @@ func TestService_CompanyCreate(t *testing.T) {
 		wantErr      bool
 		repoResponse func() (model.Company, error)
 	}{
-		{name: "success case",
+		{name: "failure case",
 			args:    args{model.CreateCompany{CompanyName: "", Adress: "bangalore", Domain: "it"}},
 			want:    model.Company{},
 			wantErr: true,

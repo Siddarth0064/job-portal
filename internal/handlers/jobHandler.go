@@ -16,6 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// =============== COMPANY CREATION FUNC do's all the creations of company in the database ============
 func (h *handler) companyCreation(c *gin.Context) {
 
 	ctx := c.Request.Context()
@@ -45,8 +46,6 @@ func (h *handler) companyCreation(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "invalid input"})
 		return
 	}
-	// Regclaims:=ctx.Value(middlewear.TokenIdKey)
-	// companyCreation.User= int(Regclaims.Subject)
 
 	us, err := h.cs.CompanyCreate(companyCreation)
 	if err != nil {
@@ -58,6 +57,7 @@ func (h *handler) companyCreation(c *gin.Context) {
 
 }
 
+// ======================GET ALL COMPANY FUNC will retrive all companies===============
 func (h *handler) getAllCompany(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -79,6 +79,7 @@ func (h *handler) getAllCompany(c *gin.Context) {
 
 }
 
+// ====================GET COMPANY FUNC RETRIVE COMPANY BY ID IN THE DATABASE===============================
 func (h *handler) getCompany(c *gin.Context) {
 
 	ctx := c.Request.Context()
@@ -94,6 +95,8 @@ func (h *handler) getCompany(c *gin.Context) {
 	c.JSON(http.StatusOK, co)
 
 }
+
+// ========================== POST JOB FUNC DO'S CREATING JOB IN THE COMPANY =================================
 func (h *handler) postJob(c *gin.Context) {
 	ctx := c.Request.Context()
 	traceId, ok := ctx.Value(middlewear.TraceIdKey).(string)
@@ -132,6 +135,8 @@ func (h *handler) postJob(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, us)
 }
+
+// ========================== GET JOB FUNC RETRIVE ALL JOB IN THE DATABASE ===========================
 func (h *handler) getJob(c *gin.Context) {
 	ctx := c.Request.Context()
 	traceId, ok := ctx.Value(middlewear.TraceIdKey).(string)
@@ -155,6 +160,8 @@ func (h *handler) getJob(c *gin.Context) {
 	c.JSON(http.StatusOK, us)
 
 }
+
+// ======================= GET ALL JOB FUNC RETRIVE ALL JOB IN THE ALL COMPANY ====================
 func (h *handler) getAllJob(c *gin.Context) {
 	ctx := c.Request.Context()
 	traceId, ok := ctx.Value(middlewear.TraceIdKey).(string)

@@ -20,6 +20,7 @@ type handler struct {
 	cs services.CompanyService
 }
 
+// =========================NEW HANDLERS IS INITIALIZE TO THE HANDLER STRUCT =========================
 func NewHandler(a *auth.Auth, us services.UsersService, cs services.CompanyService) (*handler, error) {
 	if us == nil {
 		return nil, errors.New("service implementation not given")
@@ -28,6 +29,8 @@ func NewHandler(a *auth.Auth, us services.UsersService, cs services.CompanyServi
 	return &handler{a: a, us: us, cs: cs}, nil
 
 }
+
+// ===================== USER SIGN IN FUNC IS USED TO SIGNIN TO THE DATABASE =============================
 func (h *handler) userSignin(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -64,6 +67,7 @@ func (h *handler) userSignin(c *gin.Context) {
 
 }
 
+// ================================== USER LOGIN IN FUNC IS USED TO LOGIN TO THE ACCOUNT ===========================
 func (h *handler) userLoginin(c *gin.Context) {
 	ctx := c.Request.Context()
 

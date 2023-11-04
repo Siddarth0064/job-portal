@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// ============open func acts as a connecting to the database==========================
 func Open() (*gorm.DB, error) {
 	dsn := "host=localhost user=postgres password=admin dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -20,6 +21,7 @@ func Open() (*gorm.DB, error) {
 	return db, nil
 }
 
+// ====================connection func do's all the connection to the database===================
 func Connection() (*gorm.DB, error) {
 	log.Info().Msg("main : Started : Initializing db support")
 	db, err := Open()

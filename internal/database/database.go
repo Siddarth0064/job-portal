@@ -5,6 +5,7 @@ import (
 	"log"
 )
 
+// ====================createiing table in the database func =======================
 func CreateTable() {
 	// Drop the table student if it exists
 	db, err := Open()

@@ -14,12 +14,15 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ====================== main func ======================================================
 func main() {
 	err := startApp()
 	if err != nil {
 		log.Panic().Err(err).Send()
 	}
 }
+
+// ================== starting connection to the database and APi and reading private.pem and public.pem ========
 func startApp() error {
 	log.Info().Msg("started main")
 	privatePEM, err := os.ReadFile(`C:\Users\ORR Training 4\Desktop\coding\job-portal-api\private.pem`)
@@ -58,7 +61,7 @@ func startApp() error {
 	if err != nil {
 		return err
 	}
-
+	//========================server port 8085======================================
 	api := http.Server{
 		Addr:    ":8085",
 		Handler: handlers.Api(a, se),

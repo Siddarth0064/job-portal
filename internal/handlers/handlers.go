@@ -1,25 +1,27 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
 	"job-portal-api/internal/auth"
 	"job-portal-api/internal/middleware"
 	"job-portal-api/internal/services"
+
+	"github.com/gin-gonic/gin"
 )
 
+// =================api func contains all methods and ends points of the api=================
 func Api(a *auth.Auth, s *services.Service) *gin.Engine {
-	r := gin.New()
+	router := gin.New()
 	h, _ := NewHandler(a, s, s)
-	//h := handler{a: a, us: &s}
+
 	m, _ := middlewear.NewMiddleWear(a)
-	r.Use(m.Log(), gin.Recovery())
-	r.POST("/signup", (h.userSignin))
-	r.POST("/login", h.userLoginin)
-	r.POST("/createCompany", m.Auth(h.companyCreation))
-	r.GET("/getAllCompany", m.Auth(h.getAllCompany))
-	r.GET("/getCompany/:id", m.Auth(h.getCompany))
-	r.POST("/companies/:company_id/jobs", m.Auth(h.postJob))
-	r.GET("/companies/:company_id/jobs", m.Auth(h.getJob))
-	r.GET("/jobs", m.Auth(h.getAllJob))
-	return r
+	router.Use(m.Log(), gin.Recovery())
+	router.POST("/signin", (h.userSignin))
+	router.POST("/login", h.userLoginin)
+	router.POST("/createCompany", m.Auth(h.companyCreation))
+	router.GET("/getAllCompany", m.Auth(h.getAllCompany))
+	router.GET("/getCompany/:id", m.Auth(h.getCompany))
+	router.POST("/companies/:company_id/addJob", m.Auth(h.postJob))
+	router.GET("/companies/:company_id/viewjobs", m.Auth(h.getJob))
+	router.GET("/viewAllJobs", m.Auth(h.getAllJob))
+	return router
 }

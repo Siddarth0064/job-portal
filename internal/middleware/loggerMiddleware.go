@@ -21,6 +21,7 @@ type key string
 
 const TraceIdKey key = "1"
 
+// =========================LOG FUNC ===================================
 func (m Middlewear) Log() gin.HandlerFunc {
 
 	return func(c *gin.Context) {

@@ -3,6 +3,8 @@ package repository
 import model "job-portal-api/internal/models"
 
 //go:generate mockgen -source=jobDao.go -destination=jobDao_mock.go -package=repository
+
+//==================== COMPANY INTERFACE ========================================
 type Company interface {
 	CreateCompany(model.Company) (model.Company, error)
 	GetAllCompany() ([]model.Company, error)
@@ -12,6 +14,8 @@ type Company interface {
 	GetAllJobs() ([]model.Job, error)
 }
 
+//========================== CREATE COMPANY FUNC DO'S CREATING COMPANY IN THE DATABASE ================
+
 func (r *Repo) CreateCompany(u model.Company) (model.Company, error) {
 	err := r.db.Create(&u).Error
 	if err != nil {
@@ -19,6 +23,8 @@ func (r *Repo) CreateCompany(u model.Company) (model.Company, error) {
 	}
 	return u, nil
 }
+
+//======================== GET ALL COMPANY FUNC DO'S TO GET ALL COMPANY IN THE DATABASE ==================
 
 func (r *Repo) GetAllCompany() ([]model.Company, error) {
 	var s []model.Company
@@ -29,6 +35,8 @@ func (r *Repo) GetAllCompany() ([]model.Company, error) {
 
 	return s, nil
 }
+
+//================ GET COMPANY FUNC DO'S TO GET COMPANY IN THE DATABASE =================
 
 func (r *Repo) GetCompany(id int64) (model.Company, error) {
 	var m model.Company
