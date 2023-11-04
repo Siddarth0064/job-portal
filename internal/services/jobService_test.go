@@ -15,21 +15,20 @@ func TestService_CompanyCreate(t *testing.T) {
 		nc model.CreateCompany
 	}
 	tests := []struct {
-		name string
-		//s       *Service
+		name         string
 		args         args
 		want         model.Company
 		wantErr      bool
 		repoResponse func() (model.Company, error)
 	}{
-		{name: "failure case",
+		{name: "FAILURE======CASE 1",
 			args:    args{model.CreateCompany{CompanyName: "", Adress: "bangalore", Domain: "it"}},
 			want:    model.Company{},
 			wantErr: true,
 			repoResponse: func() (model.Company, error) {
 				return model.Company{}, errors.New("invalid input for create company")
 			}},
-		{name: "success case",
+		{name: "SUCCESS====CASE 1",
 			args:    args{model.CreateCompany{CompanyName: "tek", Adress: "bangalore", Domain: "it"}},
 			want:    model.Company{CompanyName: "tek", Adress: "bangs", Domain: "it"},
 			wantErr: false,
@@ -71,14 +70,14 @@ func TestService_GetAllCompanies(t *testing.T) {
 		wantErr     bool
 		repoRespons func() ([]model.Company, error)
 	}{
-		{name: "success case",
+		{name: "SUCCESS====CASE 1",
 			want:    []model.Company{{CompanyName: "tek"}, {CompanyName: "google"}},
 			wantErr: false,
 			repoRespons: func() ([]model.Company, error) {
 				return []model.Company{{CompanyName: "tek"}, {CompanyName: "google"}}, nil
 			},
 		},
-		{name: "failures case",
+		{name: "FAILURE======CASE 1",
 			want:    nil,
 			wantErr: true,
 			repoRespons: func() ([]model.Company, error) {
@@ -124,7 +123,7 @@ func TestService_GetCompany(t *testing.T) {
 		wantErr      bool
 		repoResponse func() (model.Company, error)
 	}{
-		{name: "succes for get company",
+		{name: "SUCCESS====CASE 1",
 			args:    args{id: 12},
 			want:    model.Company{CompanyName: "tek", Adress: "bangalore", Domain: "IT"},
 			wantErr: false,
@@ -132,7 +131,7 @@ func TestService_GetCompany(t *testing.T) {
 				return model.Company{CompanyName: "tek", Adress: "bangalore", Domain: "IT"}, nil
 			},
 		},
-		{name: "failure for get company",
+		{name: "FAILURE======CASE 1",
 			args:    args{},
 			want:    model.Company{},
 			wantErr: true,
@@ -180,7 +179,7 @@ func TestService_JobCreate(t *testing.T) {
 		wantErr      bool
 		repoResponse func() (model.Job, error)
 	}{
-		{name: "success for jobCreate",
+		{name: "SUCCESS====CASE 1",
 			args:    args{nj: model.CreateJob{JobTitle: "software", JobSalary: "5000"}, id: 2},
 			want:    model.Job{JobTitle: "software", JobSalary: "5000"},
 			wantErr: false,
@@ -188,7 +187,7 @@ func TestService_JobCreate(t *testing.T) {
 				return model.Job{JobTitle: "software", JobSalary: "5000"}, nil
 			},
 		},
-		{name: "failure for jobCreate",
+		{name: "FAILURE======CASE 1",
 			args:    args{nj: model.CreateJob{JobTitle: "", JobSalary: "5000"}, id: 2},
 			want:    model.Job{},
 			wantErr: true,
@@ -234,14 +233,14 @@ func TestService_GetJobs(t *testing.T) {
 		wantErr      bool
 		repoResponse func() ([]model.Job, error)
 	}{
-		{name: "succes for get jobs",
+		{name: "SUCCESS====CASE 1",
 			args:    args{id: 2},
 			want:    []model.Job{{JobTitle: "software", JobSalary: "3000"}, {JobTitle: "developer", JobSalary: "30000"}},
 			wantErr: false,
 			repoResponse: func() ([]model.Job, error) {
 				return []model.Job{{JobTitle: "software", JobSalary: "3000"}, {JobTitle: "developer", JobSalary: "30000"}}, nil
 			}},
-		{name: "failure for get jobs",
+		{name: "FAILURE======CASE 1",
 			args:    args{id: 2},
 			want:    nil,
 			wantErr: true,
@@ -282,13 +281,13 @@ func TestService_GetAllJobs(t *testing.T) {
 		wantErr      bool
 		repoResponse func() ([]model.Job, error)
 	}{
-		{name: "success for get all jobs",
+		{name: "SUCCESS====CASE 1",
 			want:    []model.Job{{JobTitle: "software", JobSalary: "1999"}, {JobTitle: "technicall", JobSalary: "47575"}},
 			wantErr: false,
 			repoResponse: func() ([]model.Job, error) {
 				return []model.Job{{JobTitle: "software", JobSalary: "1999"}, {JobTitle: "technicall", JobSalary: "47575"}}, nil
 			}},
-		{name: "failure for get all jobs",
+		{name: "FAILURE======CASE 1",
 			want:    nil,
 			wantErr: true,
 			repoResponse: func() ([]model.Job, error) {
