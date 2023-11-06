@@ -53,6 +53,21 @@ func Test_handler_companyCreation(t *testing.T) {
 			},
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedResponse:   `{"msg":"invalid input"}`,
+		},
+		{name: "input validation failure",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`{internal server error}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+
+				return c, rr, nil
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   `{"msg":"Internal Server Error"}`,
 		}, {
 			name: "success",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
@@ -157,7 +172,7 @@ func Test_handler_getAllCompany(t *testing.T) {
 			expectedResponse:   "[]",
 		},
 		{
-			name: "failure case",
+			name: "failure to get all company",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
 				rr := httptest.NewRecorder()
 				c, _ := gin.CreateTestContext(rr)
@@ -325,7 +340,26 @@ func Test_handler_postJob(t *testing.T) {
 			},
 			expectedStatusCode: http.StatusBadRequest,
 			expectedResponse:   `{"msg":"Bad Request"}`,
-		}, {
+		},
+		// {name: "input validation failure",
+		// 	setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
+		// 		rr := httptest.NewRecorder()
+		// 		c, _ := gin.CreateTestContext(rr)
+		// 		httpRequest, err := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`"message":"trace id not found in userSignin handler"`))
+		// 		if err != nil {
+		// 			return c, rr, nil
+		// 		}
+		// 		ctx := httpRequest.Context()
+		// 		ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+		// 		httpRequest = httpRequest.WithContext(ctx)
+		// 		c.Request = httpRequest
+
+		// 		return c, rr, nil
+		// 	},
+		// 	expectedStatusCode: http.StatusInternalServerError,
+		// 	expectedResponse:   `{"message":"trace id not found in userSignin handler"}`,
+		// },
+		{
 			name: "success",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
 				rr := httptest.NewRecorder()
@@ -347,6 +381,28 @@ func Test_handler_postJob(t *testing.T) {
 			},
 			expectedStatusCode: http.StatusOK,
 			expectedResponse:   `{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"job_title":"","job_salary":"","Company":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"company_name":"","company_adress":"","domain":""},"Uid":0}`,
+		},
+		{
+			name: "input validation failure",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com:8080", strings.NewReader(`{invalid input}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+
+				c.Params = append(c.Params, gin.Param{Key: "company_id", Value: "2"})
+				mc := gomock.NewController(t)
+				ms := services.NewMockCompanyService(mc)
+
+				ms.EXPECT().JobCreate(gomock.Any(), gomock.Any()).Return(model.Job{}, errors.New("errors in validation")).AnyTimes()
+
+				return c, rr, ms
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   `{"msg":"Internal Server Error"}`,
 		},
 		{
 			name: "failure case",
@@ -399,14 +455,16 @@ func Test_handler_getJob(t *testing.T) {
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
 				rr := httptest.NewRecorder()
 				c, _ := gin.CreateTestContext(rr)
-				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", nil)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`"error"`))
 				c.Request = httpRequest
 
 				return c, rr, nil
 			},
 			expectedStatusCode: http.StatusBadRequest,
 			expectedResponse:   `{"msg":"Bad Request"}`,
-		}, {
+		},
+
+		{
 			name: "error while fetching jobs from service",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.CompanyService) {
 				rr := httptest.NewRecorder()

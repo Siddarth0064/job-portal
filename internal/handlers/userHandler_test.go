@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"errors"
+
 	middlewear "job-portal-api/internal/middleware"
 	model "job-portal-api/internal/models"
 	"job-portal-api/internal/services"
@@ -12,6 +14,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/mock/gomock"
 )
 
@@ -54,6 +57,22 @@ func Test_handler_userSignin(t *testing.T) {
 			expectedResponse:   `{"msg":"invalid input"}`,
 		},
 		{
+			name: "validate request body failure",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`{error}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+
+				return c, rr, nil
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   `{"msg":"Internal Server Error"}`,
+		},
+		{
 			name: "success",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
 				rr := httptest.NewRecorder()
@@ -75,6 +94,29 @@ func Test_handler_userSignin(t *testing.T) {
 			},
 			expectedStatusCode: http.StatusOK,
 			expectedResponse:   `{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"name":"","email":""}`,
+		},
+		{
+			name: "failure case",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com:8080", strings.NewReader(`{"name":"cece",
+				"email":    "siddarth@gmail.com",
+				"password": "siddarth"}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+				c.Params = append(c.Params, gin.Param{Key: "id", Value: "123"})
+				mc := gomock.NewController(t)
+				ms := services.NewMockUsersService(mc)
+
+				ms.EXPECT().UserSignup(gomock.Any()).Return(model.User{}, errors.New("error")).AnyTimes()
+
+				return c, rr, ms
+			},
+			expectedStatusCode: http.StatusBadRequest,
+			expectedResponse:   `{"msg":"user signup failed"}`,
 		},
 	}
 	for _, tt := range tests {
@@ -131,6 +173,22 @@ func Test_handler_userLoginin(t *testing.T) {
 			expectedResponse:   `{"msg":"invalid input"}`,
 		},
 		{
+			name: "validate request body failure",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`{"error}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+
+				return c, rr, nil
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   `{"msg":"Internal Server Error"}`,
+		},
+		{
 			name: "validate request body",
 			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
 				rr := httptest.NewRecorder()
@@ -148,6 +206,52 @@ func Test_handler_userLoginin(t *testing.T) {
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedResponse:   `{"msg":"invalid input"}`,
 		},
+		{
+			name: "success case",
+			setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+				rr := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(rr)
+				httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`{
+			"email":    "",
+			"password": "hfhhfhfh"}`))
+				ctx := httpRequest.Context()
+				ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+				httpRequest = httpRequest.WithContext(ctx)
+				c.Request = httpRequest
+				c.Params = append(c.Params, gin.Param{Key: "id", Value: "123"})
+				mc := gomock.NewController(t)
+				ms := services.NewMockUsersService(mc)
+
+				ms.EXPECT().Userlogin(gomock.Any()).Return(jwt.RegisteredClaims{}, nil).AnyTimes()
+
+				return c, rr, nil
+			},
+			expectedStatusCode: http.StatusInternalServerError,
+			expectedResponse:   `{"msg":"invalid input"}`,
+		},
+		// {
+		// 	name: "failure case",
+		// 	setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+		// 		rr := httptest.NewRecorder()
+		// 		c, _ := gin.CreateTestContext(rr)
+		// 		httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com", strings.NewReader(`{
+		// 	"email":    "",
+		// 	"password": "hfhhfhfh"}`))
+		// 		ctx := httpRequest.Context()
+		// 		ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+		// 		httpRequest = httpRequest.WithContext(ctx)
+		// 		c.Request = httpRequest
+		// 		c.Params = append(c.Params, gin.Param{Key: "id", Value: "123"})
+		// 		mc := gomock.NewController(t)
+		// 		ms := services.NewMockUsersService(mc)
+
+		// 		ms.EXPECT().Userlogin(gomock.Any()).Return(nil, errors.New("error")).AnyTimes()
+
+		// 		return c, rr, nil
+		// 	},
+		// 	expectedStatusCode: http.StatusBadRequest,
+		// 	expectedResponse:   `{"msg": "user signup failed"}`,
+		// },
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
