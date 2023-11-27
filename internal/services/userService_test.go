@@ -33,6 +33,13 @@ func TestService_UserSignup(t *testing.T) {
 			mockRepoResponse: func() (model.User, error) {
 				return model.User{UserName: "siddarth", Email: "Siddarth@gmail.com"}, nil
 			}},
+		{name: "SUCCESS====CASE 2",
+			args:    args{model.UserSignup{UserName: "siddarth", Email: "Siddarth@gmail.com", Password: "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"}},
+			want:    model.User{},
+			wantErr: true,
+			mockRepoResponse: func() (model.User, error) {
+				return model.User{}, errors.New("error in password")
+			}},
 		{name: "FAILURE======CASE 1",
 			args:    args{model.UserSignup{UserName: "", Email: "Siddarth@gmail.com", Password: "sidd@12"}},
 			want:    model.User{},
@@ -93,6 +100,14 @@ func TestService_Userlogin(t *testing.T) {
 			mockRepoResponse: func() (model.User, error) {
 				return model.User{}, errors.New("error")
 			}},
+		{name: "FAILURE======CASE2",
+			args:    args{model.UserLogin{Email: "siddarthAgmail.com", Password: ""}},
+			want:    jwt.RegisteredClaims{},
+			wantErr: true,
+			mockRepoResponse: func() (model.User, error) {
+				return model.User{Email: "siddarthAgmail.com", PasswordHash: "$2a$10$votXUqKwkXe6l5.2aVKSU.08QEPzZYuXy47OP7JuHebrZSppBlYSW"}, nil
+			}},
+
 		{name: "SUCCESS====CASE 1",
 			args:    args{model.UserLogin{Email: "siddarthAgmail.com", Password: "hfhhfhfh"}},
 			want:    jwt.RegisteredClaims{Issuer: "service project", Subject: "0", Audience: jwt.ClaimStrings{"users"}, ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)), IssuedAt: jwt.NewNumericDate(time.Now())},

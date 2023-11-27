@@ -53,19 +53,19 @@ func (mr *MockCompanyMockRecorder) CreateCompany(arg0 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCompany", reflect.TypeOf((*MockCompany)(nil).CreateCompany), arg0)
 }
 
-// CreateJob mocks base method.
-func (m *MockCompany) CreateJob(j model.Job) (model.Job, error) {
+// FetchJobData mocks base method.
+func (m *MockCompany) FetchJobData(jid uint64) (model.Job, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateJob", j)
+	ret := m.ctrl.Call(m, "FetchJobData", jid)
 	ret0, _ := ret[0].(model.Job)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateJob indicates an expected call of CreateJob.
-func (mr *MockCompanyMockRecorder) CreateJob(j any) *gomock.Call {
+// FetchJobData indicates an expected call of FetchJobData.
+func (mr *MockCompanyMockRecorder) FetchJobData(jid any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateJob", reflect.TypeOf((*MockCompany)(nil).CreateJob), j)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchJobData", reflect.TypeOf((*MockCompany)(nil).FetchJobData), jid)
 }
 
 // GetAllCompany mocks base method.
@@ -126,4 +126,34 @@ func (m *MockCompany) GetJobs(id int) ([]model.Job, error) {
 func (mr *MockCompanyMockRecorder) GetJobs(id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobs", reflect.TypeOf((*MockCompany)(nil).GetJobs), id)
+}
+
+// GetTheJobData mocks base method.
+func (m *MockCompany) GetTheJobData(jobid uint) (model.Job, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTheJobData", jobid)
+	ret0, _ := ret[0].(model.Job)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTheJobData indicates an expected call of GetTheJobData.
+func (mr *MockCompanyMockRecorder) GetTheJobData(jobid any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTheJobData", reflect.TypeOf((*MockCompany)(nil).GetTheJobData), jobid)
+}
+
+// PostJob mocks base method.
+func (m *MockCompany) PostJob(nj model.Job) (model.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PostJob", nj)
+	ret0, _ := ret[0].(model.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PostJob indicates an expected call of PostJob.
+func (mr *MockCompanyMockRecorder) PostJob(nj any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostJob", reflect.TypeOf((*MockCompany)(nil).PostJob), nj)
 }

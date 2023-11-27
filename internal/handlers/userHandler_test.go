@@ -230,6 +230,29 @@ func Test_handler_userLoginin(t *testing.T) {
 			expectedResponse:   `{"msg":"invalid input"}`,
 		},
 		// {
+		// 	name: "success",
+		// 	setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
+		// 		rr := httptest.NewRecorder()
+		// 		c, _ := gin.CreateTestContext(rr)
+		// 		httpRequest, _ := http.NewRequest(http.MethodGet, "http://test.com:8080", strings.NewReader(`{
+		// 		"email":    "siddarth@gmail.com",
+		// 		"password": "siddarth"}`))
+		// 		ctx := httpRequest.Context()
+		// 		ctx = context.WithValue(ctx, middlewear.TraceIdKey, "123")
+		// 		httpRequest = httpRequest.WithContext(ctx)
+		// 		c.Request = httpRequest
+		// 		c.Params = append(c.Params, gin.Param{Key: "id", Value: "123"})
+		// 		mc := gomock.NewController(t)
+		// 		ms := services.NewMockUsersService(mc)
+
+		// 		ms.EXPECT().Userlogin(gomock.Any()).Return(jwt.RegisteredClaims{}, nil).AnyTimes()
+
+		// 		return c, rr, ms
+		// 	},
+		// 	expectedStatusCode: http.StatusOK,
+		// 	expectedResponse:   `jwt.RegisteredClaims{Issuer: "service project", Subject: "0", Audience: jwt.ClaimStrings{"users"}, ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)), IssuedAt: jwt.NewNumericDate(time.Now())}`,
+		// },
+		// {
 		// 	name: "failure case",
 		// 	setup: func() (*gin.Context, *httptest.ResponseRecorder, services.UsersService) {
 		// 		rr := httptest.NewRecorder()

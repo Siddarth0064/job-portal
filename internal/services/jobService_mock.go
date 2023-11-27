@@ -9,6 +9,7 @@
 package services
 
 import (
+	context "context"
 	model "job-portal-api/internal/models"
 	reflect "reflect"
 
@@ -114,16 +115,31 @@ func (mr *MockCompanyServiceMockRecorder) GetJobs(id any) *gomock.Call {
 }
 
 // JobCreate mocks base method.
-func (m *MockCompanyService) JobCreate(nj model.CreateJob, id uint64) (model.Job, error) {
+func (m *MockCompanyService) JobCreate(newJob model.NewJobRequest, id uint64) (model.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "JobCreate", nj, id)
-	ret0, _ := ret[0].(model.Job)
+	ret := m.ctrl.Call(m, "JobCreate", newJob, id)
+	ret0, _ := ret[0].(model.Response)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // JobCreate indicates an expected call of JobCreate.
-func (mr *MockCompanyServiceMockRecorder) JobCreate(nj, id any) *gomock.Call {
+func (mr *MockCompanyServiceMockRecorder) JobCreate(newJob, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JobCreate", reflect.TypeOf((*MockCompanyService)(nil).JobCreate), nj, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JobCreate", reflect.TypeOf((*MockCompanyService)(nil).JobCreate), newJob, id)
+}
+
+// ProccessApplication mocks base method.
+func (m *MockCompanyService) ProccessApplication(ctx context.Context, applicationData []model.NewUserApplication) ([]model.NewUserApplication, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ProccessApplication", ctx, applicationData)
+	ret0, _ := ret[0].([]model.NewUserApplication)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ProccessApplication indicates an expected call of ProccessApplication.
+func (mr *MockCompanyServiceMockRecorder) ProccessApplication(ctx, applicationData any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProccessApplication", reflect.TypeOf((*MockCompanyService)(nil).ProccessApplication), ctx, applicationData)
 }

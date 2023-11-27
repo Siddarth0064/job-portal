@@ -32,7 +32,7 @@ func (m Middlewear) Auth(next gin.HandlerFunc) gin.HandlerFunc {
 			// If the header format doesn't match required format, log and send an error
 			err := errors.New("expected authorization header format: Bearer <token>")
 			log.Error().Err(err).Str("Trace Id", traceId).Send()
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New("authentication failed")})
 			return
 		}
 
@@ -40,6 +40,7 @@ func (m Middlewear) Auth(next gin.HandlerFunc) gin.HandlerFunc {
 		if err != nil {
 			log.Info().Msg("Auth failed")
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": http.StatusUnauthorized})
+			return
 		}
 
 		ctx = context.WithValue(ctx, TokenIdKey, regClaims)

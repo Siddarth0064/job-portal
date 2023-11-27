@@ -112,3 +112,93 @@ func (h *handler) userLoginin(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 
 }
+
+func (h *handler) ForgetPassword(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	traceId, ok := ctx.Value(middlewear.TraceIdKey).(string)
+	if !ok {
+		log.Error().Str("traceId", traceId).Msg("trace id not found in forgetPassword handler")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+		return
+	}
+
+	var forgetPassData model.ForgetPass
+	body := c.Request.Body
+	err := json.NewDecoder(body).Decode(&forgetPassData)
+	if err != nil {
+		log.Error().Err(err).Msg("error in decoding in forgetPassword func")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+		return
+	}
+
+	validate := validator.New()
+	err = validate.Struct(&forgetPassData)
+	if err != nil {
+		log.Error().Err(err).Msg("error in validating ")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "invalid input pls provide valid struct"})
+		return
+	}
+
+	_, otph, err := h.us.ForgetPassword(ctx, forgetPassData)
+	if err != nil {
+		log.Error().Err(err).Msg("error in forgetPassword func  ")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "can't send password to mail,  error in server"})
+		return
+	}
+
+	// token, err := h.a.GenerateToken(regClaims)
+	// if err != nil {
+	// 	log.Error().Err(err).Msg("error in Gneerating toek ")
+	// 	c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+	// 	return
+
+	// }
+
+	c.JSON(http.StatusOK, otph)
+
+}
+func (h *handler) ChangePassword(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	traceId, ok := ctx.Value(middlewear.TraceIdKey).(string)
+	if !ok {
+		log.Error().Str("traceId", traceId).Msg("trace id not found in ChangePassword handler")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+		return
+	}
+	var otpChange model.ChnagePass
+	body := c.Request.Body
+	err := json.NewDecoder(body).Decode(&otpChange)
+	if err != nil {
+		log.Error().Err(err).Msg("error in decoding")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+		return
+	}
+
+	validate := validator.New()
+	err = validate.Struct(&otpChange)
+	if err != nil {
+		log.Error().Err(err).Msg("error in validating ")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "invalid input"})
+		return
+	}
+
+	success, err := h.us.ChangePass(ctx, otpChange)
+	if err != nil {
+		log.Error().Err(err).Msg("error in Loginin ")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": "error in changePass func"})
+		return
+	}
+
+	// token, err := h.a.GenerateToken(regClaims)
+	// if err != nil {
+	// 	log.Error().Err(err).Msg("error in Gneerating toek ")
+	// 	c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"msg": http.StatusText(http.StatusInternalServerError)})
+	// 	return
+
+	// }
+
+	c.JSON(http.StatusOK, success)
+
+}

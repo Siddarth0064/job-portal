@@ -1,0 +1,33 @@
+version: "3"
+ 
+services:
+  job-portal:  #service name for job-portal
+   container_name: job-portal
+   image: "job-portal"
+   ports: 
+     - "8080:8080"
+   build: .
+   env_file:
+     - .env
+     - .private.env
+     - .pubKey.env
+     - .redis.env
+   depends_on:
+     - postgres
+   restart: always
+  postgres: # this is a service for database 
+   container_name: postgres
+   image: postgres
+   ports:
+    - "5432:5432"
+  #  environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=admin
+  #     - POSTGRES_DB=postgres
+   env_file:
+    - .dbpos.env
+  redis:
+   container_name: redis
+   image: redis
+   ports:
+     - "6379:6379"

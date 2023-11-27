@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"job-portal-api/config"
 	"job-portal-api/internal/auth"
+	"job-portal-api/internal/cache"
 	"job-portal-api/internal/database"
+	"job-portal-api/internal/database/redis"
 	"job-portal-api/internal/handlers"
 	"job-portal-api/internal/repository"
 	"job-portal-api/internal/services"
 	"net/http"
-	"os"
 
 	"github.com/golang-jwt/jwt/v5"
+	//"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 )
 
@@ -24,20 +27,28 @@ func main() {
 
 // ================== starting connection to the database and APi and reading private.pem and public.pem ========
 func startApp() error {
+	cfg := config.GetConfig()
+	log.Info().Interface("cfg", cfg).Msg("config")
+
+	//==================================================================
+
 	log.Info().Msg("started main")
-	privatePEM, err := os.ReadFile(`C:\Users\ORR Training 4\Desktop\coding\job-portal-api\private.pem`)
-	if err != nil {
-		return fmt.Errorf("cannot find file private.pem %w", err)
-	}
+	//privateKey:=os.Getenv("PRIVATEKEY")
+	// privatePEM, err := os.ReadFile(`.private.env`)
+	// if err != nil {
+	// 	return fmt.Errorf("cannot find file private.pem %w", err)
+	// }
+	privatePEM := []byte(cfg.AppConfig.Private)
 	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privatePEM)
 	if err != nil {
 		return fmt.Errorf("cannot convert byte to key %w", err)
 	}
 
-	publicPEM, err := os.ReadFile(`C:\Users\ORR Training 4\Desktop\coding\job-portal-api\pubkey.pem`)
-	if err != nil {
-		return fmt.Errorf("cannot find file pubkey.pem %w", err)
-	}
+	// publicPEM, err := os.ReadFile(`.pubkey.env`)
+	// if err != nil {
+	// 	return fmt.Errorf("cannot find file pubkey.pem %w", err)
+	// }
+	publicPEM := []byte(cfg.AppConfig.Public)
 	publicKey, err := jwt.ParseRSAPublicKeyFromPEM(publicPEM)
 	if err != nil {
 		return fmt.Errorf("cannot convert byte to key %w", err)
@@ -51,19 +62,26 @@ func startApp() error {
 	if err != nil {
 		return err
 	}
+
+	//======================== redis connection ====================
+	rdb := redis.Connection()
+	redisLayer := cache.NewRDBLayer(rdb)
+	//=====================================================
+
 	repo, err := repository.NewRepo(db)
 	if err != nil {
 		return err
 	}
 
-	se, err := services.NewService(repo, repo)
+	se, err := services.NewService(repo, repo, redisLayer)
 
 	if err != nil {
 		return err
 	}
+
 	//========================server port 8085======================================
 	api := http.Server{
-		Addr:    ":8085",
+		Addr:    fmt.Sprintf(":%s", cfg.AppConfig.Port),
 		Handler: handlers.Api(a, se),
 	}
 	err = api.ListenAndServe()
